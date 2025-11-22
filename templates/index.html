@@ -3,20 +3,20 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Klasifikasi Citra Buah dengan KNN</title>
+    <title>Klasifikasi Kematangan Mangga dengan KNN</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 <div class="container">
-    <h1>Klasifikasi Citra Buah dengan KNN</h1>
+    <h1>Klasifikasi Kematangan Mangga dengan KNN</h1>
     <p class="subtitle">
-        Alur: Citra RGB asli → Segmentasi → Ekstraksi ciri RGB → Klasifikasi K-NN.
+        Citra RGB asli → Segmentasi → Ekstraksi ciri RGB → Klasifikasi K-NN
+        (mentah, matang, busuk).
     </p>
 
-    <!-- Form upload -->
     <form action="{{ url_for('process') }}" method="post" enctype="multipart/form-data" class="upload-form">
         <div class="form-group">
-            <label for="image">Pilih citra buah (JPG/PNG):</label>
+            <label for="image">Pilih citra mangga (JPG/PNG):</label>
             <input type="file" name="image" id="image" required>
         </div>
         <button type="submit">Proses</button>
@@ -53,7 +53,15 @@
             {% endif %}
 
             <h3>Hasil Klasifikasi K-NN</h3>
-            <p>Kelas citra: <strong>{{ predicted_label }}</strong></p>
+            {% if predicted_label == 'mentah' %}
+                <p>Tingkat kematangan: <strong>Mentah</strong></p>
+            {% elif predicted_label == 'matang' %}
+                <p>Tingkat kematangan: <strong>Matang</strong></p>
+            {% elif predicted_label == 'busuk' %}
+                <p>Tingkat kematangan: <strong>Busuk</strong></p>
+            {% else %}
+                <p>Tingkat kematangan: <strong>{{ predicted_label }}</strong></p>
+            {% endif %}
         </div>
     {% endif %}
 </div>

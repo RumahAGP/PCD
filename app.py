@@ -46,24 +46,20 @@ def process():
     if not (file and allowed_file(file.filename)):
         return redirect(url_for('index'))
 
-    # Simpan citra asli
     filename = secure_filename(file.filename)
     original_path = os.path.join(UPLOAD_FOLDER, filename)
     file.save(original_path)
 
-    # Baca citra dengan PIL
     pil_image = Image.open(original_path)
 
-    # Proses: segmentasi + fitur + klasifikasi
-    img_np, img_seg_np, mask_np, fitur_rgb, pred_label = klasifikasi_dan_segmentasi(pil_image)
+    img_np, img_seg_np, mask_np, fitur_rgb, pred_label = \
+        klasifikasi_dan_segmentasi(pil_image)
 
-    # Simpan citra hasil segmentasi
     seg_img = Image.fromarray(img_seg_np)
     seg_filename = f"seg_{filename}"
     seg_path = os.path.join(RESULT_FOLDER, seg_filename)
     seg_img.save(seg_path)
 
-    # Simpan mask
     mask_img_pil = Image.fromarray(mask_np)
     mask_filename = f"mask_{filename}"
     mask_path = os.path.join(RESULT_FOLDER, mask_filename)

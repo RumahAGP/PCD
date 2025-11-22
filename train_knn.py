@@ -12,8 +12,8 @@ import joblib
 from utils.segmentasi import segment_fruit
 from utils.fitur_rgb import ekstrak_fitur_rgb
 
-# SESUAIKAN DENGAN NAMA FOLDER DI data/train/
-CLASSES = ['mangga', 'lain']  # kalau mau 'mangga' vs 'jambu', ubah di sini + folder
+# Kelas sesuai folder di data/train/
+CLASSES = ['mentah', 'matang', 'busuk']
 TRAIN_DIR = os.path.join('data', 'train')
 
 MODEL_DIR = 'models'
@@ -22,13 +22,10 @@ MODEL_PATH = os.path.join(MODEL_DIR, 'knn_rgb.pkl')
 
 def load_dataset_features():
     """
-    Baca semua citra di data/train/mangga dan data/train/lain,
+    Baca semua citra di data/train/mentah, matang, busuk,
     lakukan:
-      - segmentasi → mask & citra RGB hasil segmentasi
+      - segmentasi → mask & citra hasil segmen
       - ekstraksi ciri RGB → [R_mean, G_mean, B_mean]
-    Hasil:
-      - X : array (N_sampel, 3)
-      - y : array label ('mangga' / 'lain')
     """
     X = []
     y = []
@@ -66,17 +63,16 @@ def load_dataset_features():
 
 
 def main():
-    # 1. Load dataset
     X, y = load_dataset_features()
     print("Jumlah sampel:", len(y))
 
     if len(y) == 0:
-        print("Tidak ada data. Isi dulu data/train/mangga dan data/train/lain.")
+        print("Tidak ada data. Isi dulu data/train/mentah, matang, busuk.")
         return
 
     print("Dimensi fitur per sampel:", X.shape[1])  # harusnya 3
 
-    # 2. Evaluasi KNN dengan beberapa k
+    # evaluasi beberapa k
     for k in [1, 3, 5, 7, 9]:
         print(f"\n=== Evaluasi KNN dengan k = {k} ===")
         knn = KNeighborsClassifier(n_neighbors=k)
@@ -99,8 +95,8 @@ def main():
         print("Classification Report:")
         print(classification_report(y, y_pred_cv, target_names=CLASSES))
 
-    # 3. Latih model final & simpan
-    best_k = 3  # atau pilih yang terbaik dari hasil di atas
+    # latih model final
+    best_k = 3  # atau ganti dengan k terbaik dari hasil di atas
     print(f"\nMelatih model final dengan k = {best_k} dan menyimpan ke {MODEL_PATH}")
     knn_final = KNeighborsClassifier(n_neighbors=best_k)
     knn_final.fit(X, y)
